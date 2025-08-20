@@ -9,9 +9,9 @@ const API_URL =
 const axiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-   headers: {
+  headers: {
     'Content-Type': 'application/json',
-  }, // Always send cookies
+  },
 });
 
 type User = {
@@ -26,135 +26,208 @@ type AuthStore = {
   user: User | null;
   loading: boolean;
   error: string | null;
+  refreshTimeoutId: NodeJS.Timeout | null; // Add this to track timeout
   signup: (name: string, email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   fetchUser: () => Promise<void>;
   refreshToken: () => Promise<void>;
   forgotPassword: (email: string) => Promise<void>;
-  resetPassword: (
-    token: string,
-    newPassword: string
-  ) => Promise<void>;
+  resetPassword: (token: string, newPassword: string) => Promise<void>;
   verifyEmail: (token: string) => Promise<void>;
+  scheduleTokenRefresh: () => void; // Add this helper
 };
 
-export const useAuthStore = create<AuthStore>((set) => ({
-  user: null,
-  loading: false,
-  error: null,
-
-  signup: async (name, email, password) => {
-    set({ loading: true, error: null });
+export const useAuthStore = create<AuthStore>((set, get) => {
+  const makeAuthenticatedRequest = async (requestFn: () => Promise<any>) => {
     try {
-      const res = await axiosInstance.post("/auth/signup", {
-        name,
-        email,
-        password,
-      });
-      set({ user: res.data.user, loading: false });
-    } catch (err: any) {
-      set({
-        error: err.response?.data?.message || "Signup failed",
-        loading: false,
-      });
+      return await requestFn();
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        try {
+          await axiosInstance.post("/auth/refresh-token");
+          return await requestFn();
+        } catch (refreshError) {
+          set({ user: null });
+          throw refreshError;
+        }
+      }
+      throw error;
     }
-  },
+  };
 
-  login: async (email, password) => {
-    set({ loading: true, error: null });
-    try {
-      const res = await axiosInstance.post("/auth/login", {
-        email,
-        password,
-      });
-      set({ user: res.data.user, loading: false });
-    } catch (err: any) {
-      set({
-        error: err.response?.data?.message || "Login failed",
-        loading: false,
-      });
-    }
-  },
+  return {
+    user: null,
+    loading: false,
+    error: null,
+    refreshTimeoutId: null,
 
-  logout: async () => {
-    try {
-      await axiosInstance.post("/auth/logout");
-      set({ user: null });
-    } catch (err) {
-      console.error("Logout failed", err);
-    }
-  },
+    // ADD THIS HELPER FUNCTION
+    scheduleTokenRefresh: () => {
+      const state = get();
+      
+      // Clear any existing timeout
+      if (state.refreshTimeoutId) {
+        clearTimeout(state.refreshTimeoutId);
+      }
 
-  fetchUser: async () => {
-    set({ loading: true, error: null });
-    try {
-      const res = await axiosInstance.get("/auth/me");
-      set({ user: res.data.user, loading: false });
-    } catch (err: any) {
-      set({
-        error: err.response?.data?.message || null,
-        loading: false,
-        user: null,
-      });
-    }
-  },
+      // Schedule refresh 1 minute before expiry (14 minutes for 15min tokens)
+      const timeoutId = setTimeout(async () => {
+        try {
+          await get().refreshToken();
+          // Schedule the next refresh
+          get().scheduleTokenRefresh();
+        } catch (error) {
+          console.error('Scheduled token refresh failed:', error);
+          set({ user: null });
+        }
+      }, 14 * 60 * 1000); // 14 minutes
 
-  refreshToken: async () => {
-    try {
-      await axiosInstance.post("/auth/refresh-token");
-    } catch (err) {
-      console.error("Token refresh failed", err);
-      set({ user: null });
-    }
-  },
+      set({ refreshTimeoutId: timeoutId });
+    },
 
-  forgotPassword: async (email) => {
-    set({ loading: true, error: null });
-    try {
-      await axiosInstance.post("/auth/forgot-password", { email });
-      set({ loading: false });
-    } catch (err: any) {
-      set({
-        error: err.response?.data?.message || "Forgot password failed",
-        loading: false,
-      });
-    }
-  },
+    signup: async (name, email, password) => {
+      set({ loading: true, error: null });
+      try {
+        const res = await axiosInstance.post("/auth/signup", {
+          name,
+          email,
+          password,
+        });
+        set({ user: res.data.user, loading: false });
+        
+        // START AUTO REFRESH AFTER SIGNUP
+        get().scheduleTokenRefresh();
+        
+      } catch (err: any) {
+        set({
+          error: err.response?.data?.message || "Signup failed",
+          loading: false,
+        });
+      }
+    },
 
-  resetPassword: async (token, newPassword) => {
-    set({ loading: true, error: null });
-    try {
-      await axiosInstance.post(`/auth/reset-password/${token}`, {
-        newPassword: newPassword,
-      });
-      set({ loading: false });
-    } catch (err: any) {
-      set({
-        error: err.response?.data?.message || "Reset password failed",
-        loading: false,
-      });
-    }
-  },
+    // UPDATE LOGIN FUNCTION
+    login: async (email, password) => {
+      set({ loading: true, error: null });
+      try {
+        const res = await axiosInstance.post("/auth/login", {
+          email,
+          password,
+        });
+        set({ user: res.data.user, loading: false });
+        
+        // START AUTO REFRESH AFTER LOGIN
+        get().scheduleTokenRefresh();
+        
+      } catch (err: any) {
+        set({
+          error: err.response?.data?.message || "Login failed",
+          loading: false,
+        });
+      }
+    },
 
-verifyEmail: async (token) => {
-  set({ loading: true, error: null });
-  try {
-    const res = await axiosInstance.post("/auth/verify-email", {
-      verificationToken: token,
-    });
-    set({ loading: false, error: null });
-    if (res.data.user) {
-      set({ user: res.data.user });
-    }
-    return res.data;
-  } catch (err: any) {
-    const errorMessage = err.response?.data?.message || "Email verification failed";
-    set({
-      error: errorMessage,
-      loading: false,
-    });
-    throw new Error(errorMessage);
-  }
-},
-}));
+    // UPDATE LOGOUT FUNCTION
+    logout: async () => {
+      const state = get();
+      
+      // Clear the refresh timeout
+      if (state.refreshTimeoutId) {
+        clearTimeout(state.refreshTimeoutId);
+        set({ refreshTimeoutId: null });
+      }
+      
+      try {
+        await axiosInstance.post("/auth/logout");
+        set({ user: null });
+      } catch (err) {
+        console.error("Logout failed", err);
+        set({ user: null });
+      }
+    },
+
+    fetchUser: async () => {
+      set({ loading: true, error: null });
+      try {
+        const res = await makeAuthenticatedRequest(() => 
+          axiosInstance.get("/auth/me")
+        );
+        set({ user: res.data.user, loading: false });
+        
+        // START AUTO REFRESH IF USER IS FOUND
+        if (res.data.user) {
+          get().scheduleTokenRefresh();
+        }
+        
+      } catch (err: any) {
+        set({
+          error: err.response?.data?.message || null,
+          loading: false,
+          user: null,
+        });
+      }
+    },
+
+    refreshToken: async () => {
+      try {
+        await axiosInstance.post("/auth/refresh-token");
+      } catch (err) {
+        console.error("Token refresh failed", err);
+        set({ user: null });
+        throw err;
+      }
+    },
+
+    forgotPassword: async (email) => {
+      set({ loading: true, error: null });
+      try {
+        await axiosInstance.post("/auth/forgot-password", { email });
+        set({ loading: false });
+      } catch (err: any) {
+        set({
+          error: err.response?.data?.message || "Forgot password failed",
+          loading: false,
+        });
+      }
+    },
+
+    resetPassword: async (token, newPassword) => {
+      set({ loading: true, error: null });
+      try {
+        await axiosInstance.post(`/auth/reset-password/${token}`, {
+          newPassword: newPassword,
+        });
+        set({ loading: false });
+      } catch (err: any) {
+        set({
+          error: err.response?.data?.message || "Reset password failed",
+          loading: false,
+        });
+      }
+    },
+
+    verifyEmail: async (token) => {
+      set({ loading: true, error: null });
+      try {
+        const res = await axiosInstance.post("/auth/verify-email", {
+          verificationToken: token,
+        });
+        set({ loading: false, error: null });
+        if (res.data.user) {
+          set({ user: res.data.user });
+          // START AUTO REFRESH AFTER EMAIL VERIFICATION
+          get().scheduleTokenRefresh();
+        }
+        return res.data;
+      } catch (err: any) {
+        const errorMessage = err.response?.data?.message || "Email verification failed";
+        set({
+          error: errorMessage,
+          loading: false,
+        });
+        throw new Error(errorMessage);
+      }
+    },
+  };
+});
