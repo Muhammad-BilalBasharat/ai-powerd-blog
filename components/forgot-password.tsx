@@ -8,16 +8,19 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useAuthStore } from "@/lib/auth-store"
 
 type ForgotPasswordFormData = {
   email: string
 }
 
 export default function ForgotPasswordForm() {
+  const { forgotPassword, loading, error } = useAuthStore()
+  
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     getValues,
   } = useForm<ForgotPasswordFormData>({
     mode: "onBlur",
@@ -26,9 +29,12 @@ export default function ForgotPasswordForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setIsSubmitted(true)
+    try {
+      await forgotPassword(data.email)
+      setIsSubmitted(true)
+    } catch (err) {
+      console.error("Forgot password failed:", err)
+    }
   }
 
   if (isSubmitted) {
@@ -79,22 +85,26 @@ export default function ForgotPasswordForm() {
             />
             {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
           </div>
+          
+          {/* Display API error if any */}
+          {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+          
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={loading}
             className="w-full py-2 px-4 rounded-md font-medium text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-secondary hover:bg-tertiary"
             onMouseEnter={(e) => {
-              if (!isSubmitting) {
+              if (!loading) {
                 e.currentTarget.style.backgroundColor = "tertiary"
               }
             }}
             onMouseLeave={(e) => {
-              if (!isSubmitting) {
+              if (!loading) {
                 e.currentTarget.style.backgroundColor = "secondary"
               }
             }}
           >
-            {isSubmitting ? "Sending..." : "Send Reset Link"}
+            {loading ? "Sending..." : "Send Reset Link"}
           </Button>
         </form>
       </CardContent>

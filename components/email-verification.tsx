@@ -1,11 +1,12 @@
 "use client"
 
 import type React from "react"
-
 import { useForm, Controller } from "react-hook-form"
-import { useRef, useState } from "react"
+import { useRef } from "react"
 import { Button } from "@/components/ui/button"
-
+import { useAuthStore } from "@/lib/auth-store" // Update this import path
+import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
 
 type FormData = {
   digit0: string
@@ -17,7 +18,7 @@ type FormData = {
 }
 
 export default function EmailVerification() {
-  const { control, handleSubmit, reset, watch, setValue } = useForm<FormData>({
+  const { control, handleSubmit, reset, watch } = useForm<FormData>({
     defaultValues: {
       digit0: "",
       digit1: "",
@@ -29,17 +30,21 @@ export default function EmailVerification() {
   })
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(6).fill(null))
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  const { verifyEmail, loading} = useAuthStore()
+  const router = useRouter()
 
   const watchedValues = watch()
   const isComplete = Object.values(watchedValues).every((digit) => digit !== "")
 
   const handleInputChange = (index: number, value: string, onChange: (value: string) => void) => {
-    if (value.length > 1) return // Prevent multiple characters
+   
+    if (!/^\d*$/.test(value)) return
+    if (value.length > 1) return
 
     onChange(value)
 
-    // Auto-focus next input
+  
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus()
     }
@@ -51,31 +56,56 @@ export default function EmailVerification() {
     }
   }
 
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault()
+    const pastedData = e.clipboardData.getData("text").slice(0, 6)
+    
+    if (!/^\d+$/.test(pastedData)) {
+      toast.error("Please paste only numbers", {
+        position: "top-center",
+        duration: 2000,
+      })
+      return
+    }
+
+    const digits = pastedData.split("")
+    digits.forEach((digit, index) => {
+      if (index < 6) {
+        const fieldName = `digit${index}` as keyof FormData
+        control._formValues[fieldName] = digit
+      }
+    })
+    const lastIndex = Math.min(digits.length - 1, 5)
+    inputRefs.current[lastIndex]?.focus()
+  }
   const onSubmit = async (data: FormData) => {
-    setIsSubmitting(true)
-
     const verificationCode = Object.values(data).join("")
-    console.log("Submitting verification code:", verificationCode)
-    console.log("Form data breakdown:", data)
-    console.log("Individual digits:", Object.values(data))
+  
+    
+    try {
+      await verifyEmail(verificationCode)
+      toast.success("Email verified successfully!")
+      setTimeout(() => {
+          router.push("/login")
+          reset() 
+      }, 2500)
 
-    // Simulate verification process
-    setTimeout(() => {
+      
+    } catch (err: any) {
+      toast.error(err.message || "Invalid verification code. Please try again.")
       reset()
       if (inputRefs.current[0]) {
         inputRefs.current[0].focus()
       }
-      setIsSubmitting(false)
-      console.log("[v0] Verification process completed for code:", verificationCode)
-      console.log("[v0] Form has been reset and focus returned to first input")
-    }, 2000)
+    }
   }
-
   return (
     <div className="bg-white p-8 rounded-lg shadow-lg max-w-md mx-auto">
       <div className="text-center mb-6">
         <h1 className="text-2xl font-bold text-primary mb-2">Verify Your Email</h1>
-        <p className="text-gray-600 text-sm">Enter the 6-digit code sent to your email address.</p>
+        <p className="text-gray-600 text-sm">
+          Enter the 6-digit code sent to your email address.
+        </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -105,7 +135,10 @@ export default function EmailVerification() {
                   value={value}
                   onChange={(e) => handleInputChange(index, e.target.value, onChange)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-12 h-12 text-center text-lg font-semibold border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none transition-colors"
+                  onPaste={index === 0 ? handlePaste : undefined}
+                  className="w-12 h-12 text-center text-lg font-semibold border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={loading}
+                  autoComplete="off"
                 />
               )}
             />
@@ -114,13 +147,12 @@ export default function EmailVerification() {
 
         <Button
           type="submit"
-        //   disabled={!isComplete || isSubmitting}
-          className="w-full bg-secondary hover:bg-tertiary text-white font-medium py-3 rounded-lg transition-colors"
+          disabled={!isComplete || loading}
+          className="w-full bg-secondary hover:bg-tertiary text-white font-medium py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Verifying..." : "Verify Email"}
+          {loading ? "Verifying..." : "Verify Email"}
         </Button>
       </form>
     </div>
   )
 }
-

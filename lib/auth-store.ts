@@ -4,11 +4,14 @@ import { create } from "zustand";
 import axios from "axios";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/auth";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
-  withCredentials: true, // Always send cookies
+  withCredentials: true,
+   headers: {
+    'Content-Type': 'application/json',
+  }, // Always send cookies
 });
 
 type User = {
@@ -44,7 +47,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   signup: async (name, email, password) => {
     set({ loading: true, error: null });
     try {
-      const res = await axiosInstance.post("/signup", {
+      const res = await axiosInstance.post("/auth/signup", {
         name,
         email,
         password,
@@ -61,7 +64,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   login: async (email, password) => {
     set({ loading: true, error: null });
     try {
-      const res = await axiosInstance.post("/login", {
+      const res = await axiosInstance.post("/auth/login", {
         email,
         password,
       });
@@ -76,7 +79,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   logout: async () => {
     try {
-      await axiosInstance.post("/logout");
+      await axiosInstance.post("/auth/logout");
       set({ user: null });
     } catch (err) {
       console.error("Logout failed", err);
@@ -86,7 +89,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   fetchUser: async () => {
     set({ loading: true, error: null });
     try {
-      const res = await axiosInstance.get("/me");
+      const res = await axiosInstance.get("/auth/me");
       set({ user: res.data.user, loading: false });
     } catch (err: any) {
       set({
@@ -99,7 +102,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
   refreshToken: async () => {
     try {
-      await axiosInstance.post("/refresh-token");
+      await axiosInstance.post("/auth/refresh-token");
     } catch (err) {
       console.error("Token refresh failed", err);
       set({ user: null });
@@ -109,7 +112,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   forgotPassword: async (email) => {
     set({ loading: true, error: null });
     try {
-      await axiosInstance.post("/forgot-password", { email });
+      await axiosInstance.post("/auth/forgot-password", { email });
       set({ loading: false });
     } catch (err: any) {
       set({
@@ -122,8 +125,8 @@ export const useAuthStore = create<AuthStore>((set) => ({
   resetPassword: async (token, newPassword) => {
     set({ loading: true, error: null });
     try {
-      await axiosInstance.post(`/reset-password/${token}`, {
-        password: newPassword,
+      await axiosInstance.post(`/auth/reset-password/${token}`, {
+        newPassword: newPassword,
       });
       set({ loading: false });
     } catch (err: any) {
@@ -134,16 +137,24 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 
-  verifyEmail: async (token) => {
-    set({ loading: true, error: null });
-    try {
-      await axiosInstance.get(`/verify-email/${token}`);
-      set({ loading: false });
-    } catch (err: any) {
-      set({
-        error: err.response?.data?.message || "Email verification failed",
-        loading: false,
-      });
+verifyEmail: async (token) => {
+  set({ loading: true, error: null });
+  try {
+    const res = await axiosInstance.post("/auth/verify-email", {
+      verificationToken: token,
+    });
+    set({ loading: false, error: null });
+    if (res.data.user) {
+      set({ user: res.data.user });
     }
-  },
+    return res.data;
+  } catch (err: any) {
+    const errorMessage = err.response?.data?.message || "Email verification failed";
+    set({
+      error: errorMessage,
+      loading: false,
+    });
+    throw new Error(errorMessage);
+  }
+},
 }));

@@ -19,6 +19,7 @@ export default function About() {
                 src={profile} // Ensure this path is correct
                 alt="Profie Image"
                 fill
+                sizes="(max-width: 640px) 100vw, 640px"
                 className="object-cover"
               />
             </div>

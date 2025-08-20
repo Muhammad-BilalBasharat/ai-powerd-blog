@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Lock } from "lucide-react"
 import { PasswordResetSuccess } from "./password-reset-success"
+import { useAuthStore } from "@/lib/auth-store" // Update with correct path
 
 type ResetPasswordFormProps = {
   token: string
@@ -17,23 +18,25 @@ type FormData = {
 
 export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const [isSuccess, setIsSuccess] = useState(false)
+  const { resetPassword, loading, error } = useAuthStore()
 
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormData>()
 
   const newPassword = watch("newPassword")
 
   const onSubmit = async (data: FormData) => {
-    console.log("Password reset submitted with token:", token)
-    console.log("Form data:", data)
-    // Add your API call here to reset password using the token
-
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API delay
-    setIsSuccess(true)
+    try {
+      await resetPassword(token, data.newPassword)
+      setIsSuccess(true)
+    } catch (err) {
+      // Error is already handled in the store
+      console.error("Password reset failed:", err)
+    }
   }
 
   if (isSuccess) {
@@ -76,12 +79,15 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>}
         </div>
 
+        {/* Display API error if any */}
+        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={loading}
           className="w-full h-12 bg-secondary hover:bg-tertiary text-white font-medium text-base rounded-lg transition-colors disabled:opacity-50"
         >
-          {isSubmitting ? "Setting Password..." : "Set New Password"}
+          {loading ? "Setting Password..." : "Set New Password"}
         </Button>
       </form>
     </div>
