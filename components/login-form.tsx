@@ -23,7 +23,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   const [showPassword, setShowPassword] = useState(false)
   const [isLoggingIn, setIsLoggingIn] = useState(false)
   const router = useRouter()
-  const { login, loading, error } = useAuthStore() // Remove 'user' from here
+  const { login, loading, error } = useAuthStore() 
 
   const {
     register,
@@ -31,13 +31,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     formState: { errors },
     reset,
   } = useForm<LoginFormData>()
-
-  // Remove this problematic code:
-  // if (user && !isLoggingIn) {
-  //   router.push("/")
-  // }
-
-  // Handle error display
   if (error && isLoggingIn) {
     toast.error(error)
     setIsLoggingIn(false)
@@ -48,18 +41,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     
     try {
       await login(data.email, data.password)
-      
-      // Success - show toast and redirect
-      toast.success("Login successful! Redirecting...", {
+            toast.success("Login successful! Redirecting...", {
         duration: 2000,
       })
-      
-      // Reset form
       reset()
-      
-      // Redirect after successful login
       setTimeout(() => {
-        router.push("/") // Change this to your desired redirect path
+        router.push("/") 
         setIsLoggingIn(false)
       }, 1500)
       
@@ -147,7 +134,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 <div className="flex flex-col gap-3">
                   <Button 
                     type="submit" 
-                    className="w-full" 
+                    className="w-full bg-secondary hover:bg-tertiary text-white font-medium text-base rounded-lg transition-colors disabled:opacity-50" 
                     disabled={loading || isLoggingIn}
                   >
                     {(loading || isLoggingIn) ? (

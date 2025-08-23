@@ -1,24 +1,25 @@
+// lib/comment-store.ts
 "use client";
 
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/posts";
+// Use the same base URL
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
-  withCredentials: true, // Always send cookies
+  withCredentials: true,
 });
 
-type User = {
+export type User = {
   _id: string;
   name: string;
   email: string;
   role: string;
 };
 
-type Comment = {
+ export type Comment = {
   _id: string;
   content: string;
   userId: User;
@@ -27,7 +28,7 @@ type Comment = {
   updatedAt: string;
 };
 
-type CommentStore = {
+ export type CommentStore = {
   comments: Comment[];
   loading: boolean;
   error: string | null;
@@ -47,6 +48,7 @@ export const useCommentStore = create<CommentStore>((set) => ({
   fetchCommentsForPost: async (postId: string) => {
     set({ loading: true, error: null });
     try {
+      // This will call: http://localhost:4000/api/posts/:postId/comments
       const res = await axiosInstance.get(`/posts/${postId}/comments`);
       set({ comments: res.data.comments, loading: false });
     } catch (err: any) {
@@ -60,6 +62,7 @@ export const useCommentStore = create<CommentStore>((set) => ({
   createComment: async (postId: string, content: string) => {
     set({ loading: true, error: null });
     try {
+      // This will call: http://localhost:4000/api/posts/:postId/comments
       const res = await axiosInstance.post(`/posts/${postId}/comments`, { content });
       const newComment = res.data.comment;
       set(state => ({
@@ -77,6 +80,7 @@ export const useCommentStore = create<CommentStore>((set) => ({
   updateComment: async (postId: string, commentId: string, content: string) => {
     set({ loading: true, error: null });
     try {
+      // This will call: http://localhost:4000/api/posts/:postId/comments/:commentId
       const res = await axiosInstance.put(`/posts/${postId}/comments/${commentId}`, { content });
       const updatedComment = res.data.comment;
       set(state => ({
@@ -96,6 +100,7 @@ export const useCommentStore = create<CommentStore>((set) => ({
   deleteComment: async (postId: string, commentId: string) => {
     set({ loading: true, error: null });
     try {
+      // This will call: http://localhost:4000/api/posts/:postId/comments/:commentId
       await axiosInstance.delete(`/posts/${postId}/comments/${commentId}`);
       set(state => ({
         comments: state.comments.filter(comment => comment._id !== commentId),
@@ -117,3 +122,6 @@ export const useCommentStore = create<CommentStore>((set) => ({
     set({ comments: [] });
   },
 }));
+
+
+

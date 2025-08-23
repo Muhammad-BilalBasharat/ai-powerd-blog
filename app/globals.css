@@ -44,7 +44,7 @@
    --color-primary:#002928;
   --color-secondary:#158df3;
   --color-tertiary:#1550f3;
-  
+  --breakpoint-xs: 344px;
 }
 
 :root {
