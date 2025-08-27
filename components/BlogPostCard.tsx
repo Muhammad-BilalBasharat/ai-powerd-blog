@@ -33,13 +33,17 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
       {/* Cover Image */}
       <div className="relative h-60 xs:h-48 w-full overflow-hidden">
         {/* Main Image */}
-        <div>
+        <div className="relative">
            <Link href={`/blog/${postSlug}`}>
           <Image
             src={post.mainImage?.url || "/placeholder.svg"}
             alt={post.title || "Blog post image"}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-110"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 1024px"
+            quality={75}
+            placeholder="blur"
+            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNlNWU3ZWIiLz48dGV4dCB4PSIxMDAiIHk9IjE1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSIjNmI3MjgwIj5CbG9nIFBvc3Q8L3RleHQ+PC9zdmc+"
           />
         </Link>
         </div>

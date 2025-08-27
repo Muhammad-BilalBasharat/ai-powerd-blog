@@ -139,7 +139,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
 
               {/* Submit Button */}
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full" disabled={loading}>
+                <Button type="submit" className="w-full bg-secondary hover:bg-tertiary text-white font-medium text-base rounded-lg transition-colors" disabled={loading}>
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

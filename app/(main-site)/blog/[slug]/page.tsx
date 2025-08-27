@@ -101,8 +101,8 @@ export default function BlogPostPage() {
           <div className="text-center">
             <h1 className="text-xl xs:text-2xl font-bold text-gray-900 mb-3 xs:mb-4">Post Not Found</h1>
             <p className="text-sm xs:text-base text-gray-600 mb-4 xs:mb-6">{postError || "The post you're looking for doesn't exist."}</p>
-            <Link href="/blog" className="inline-block px-4 xs:px-6 py-2 xs:py-3 text-sm xs:text-base bg-blue-600 text-white rounded-md hover:bg-blue-700">
-              Back to Blog
+            <Link href="/login" className="inline-block px-4 xs:px-6 py-2 xs:py-3 text-sm xs:text-base bg-secondary text-white rounded-md hover:bg-tertiary">
+             Login to Continue
             </Link>
           </div>
         </div>
@@ -131,6 +131,10 @@ export default function BlogPostPage() {
                 fill
                 className="object-cover"
                 priority
+                quality={75}
+                sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 1024px"
+                placeholder="blur"
+                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiNlNWU3ZWIiLz48dGV4dCB4PSIxMDAiIHk9IjE1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIwIiBmaWxsPSIjNmI3MjgwIj5CbG9nIFBvc3Q8L3RleHQ+PC9zdmc+"
               />
             </div>
           )}
