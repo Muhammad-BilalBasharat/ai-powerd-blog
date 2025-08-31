@@ -28,29 +28,21 @@ export default function SearchAndFilter({
 
   return (
     <div className="w-full max-w-4xl mx-auto mb-12 px-4 xs:px-3">
-      {/* Header Section */}
       <div className="text-center mb-12 xs:mb-10">
-        {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium mb-8 xs:mb-6">
           <span>New: AI feature integrated</span>
           <span className="text-purple-500">✨</span>
         </div>
-
-        {/* Main Title */}
         <h1 className="text-4xl md:text-5xl xs:text-3xl font-bold text-primary text-center mb-6 xs:mb-5 leading-tight">
           Your own{" "}
           <span className="text-tertiary">blogging</span>
           <br />
           platform.
         </h1>
-
-        {/* Subtitle */}
         <p className="text-lg xs:text-base text-gray-500 max-w-2xl mx-auto leading-relaxed mb-12 xs:mb-10 xs:px-2">
           This is your space to think out loud, to share what matters, and to write without filters. Whether it's one word or a thousand, your story starts right here.
         </p>
       </div>
-
-      {/* Search Section */}
       <div className="mb-8 xs:mb-6">
         <div className="flex max-w-xl mx-auto bg-white rounded-full border border-gray-200 overflow-hidden shadow-sm xs:max-w-sm">
           <input
@@ -68,8 +60,6 @@ export default function SearchAndFilter({
           </button>
         </div>
       </div>
-
-      {/* Category Pills */}
       <div className="flex gap-3 xs:gap-2 justify-center flex-wrap">
         <button
           onClick={() => onCategoryFilter("")}

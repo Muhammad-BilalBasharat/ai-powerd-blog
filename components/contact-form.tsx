@@ -68,7 +68,6 @@ export function ContactForm() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* First Row - Name and Email */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
                 <Input
@@ -95,8 +94,6 @@ export function ContactForm() {
                 <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-blue-600" />
               </div>
             </div>
-
-            {/* Second Row - Service Type and Phone */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative">
                 <Input
@@ -122,8 +119,6 @@ export function ContactForm() {
                 <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-blue-600" />
               </div>
             </div>
-
-            {/* Message Textarea */}
             <div className="relative">
               <Textarea
                 name="message"
@@ -135,8 +130,6 @@ export function ContactForm() {
               />
               <Edit3 className="absolute left-4 top-4 w-4 h-4 text-blue-600" />
             </div>
-
-            {/* Submit Button */}
             <div className="flex justify-end">
               <Button
                 type="submit"

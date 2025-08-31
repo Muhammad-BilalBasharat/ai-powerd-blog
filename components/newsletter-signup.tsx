@@ -13,13 +13,11 @@ export default function NewsletterSignup() {
     e.preventDefault()
     await subscribe({ email })
     
-    // Clear email input on successful subscription
     if (!error) {
       setEmail("")
     }
   }
 
-  // Auto clear messages after 5 seconds
   useEffect(() => {
     if (error || success) {
       const timer = setTimeout(() => {
@@ -54,14 +52,12 @@ export default function NewsletterSignup() {
         </Button>
       </form>
 
-      {/* Success Message */}
       {success && (
         <p className="text-green-600 text-sm mb-2 animate-fade-in">
           {success}
         </p>
       )}
 
-      {/* Error Message */}
       {error && (
         <p className="text-red-600 text-sm mb-2 animate-fade-in">
           {error}

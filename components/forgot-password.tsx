@@ -85,8 +85,6 @@ export default function ForgotPasswordForm() {
             />
             {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
           </div>
-          
-          {/* Display API error if any */}
           {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
           
           <Button

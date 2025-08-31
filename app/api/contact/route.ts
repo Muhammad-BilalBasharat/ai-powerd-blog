@@ -6,12 +6,11 @@ export async function POST(req: Request) {
   try {
     const { name, email, serviceType, phone, message } = await req.json()
 
-    // Create transporter with Gmail
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.GMAIL_USER, // Remove NEXT_PUBLIC_ prefix
-        pass: process.env.GMAIL_APP_PASS, // Remove NEXT_PUBLIC_ prefix
+        user: process.env.GMAIL_USER, 
+        pass: process.env.GMAIL_APP_PASS, 
       },
     })
 

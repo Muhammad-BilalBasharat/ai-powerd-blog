@@ -10,7 +10,6 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-// Type aliases
 export type Subscriber = {
   _id: string;
   email: string;
@@ -28,7 +27,6 @@ type NewsletterStore = {
   error: string | null;
   success: string | null;
   
-  // Actions
   subscribe: (data: SubscribeData) => Promise<void>;
   getAllSubscribers: () => Promise<void>;
   clearError: () => void;
@@ -46,7 +44,6 @@ export const useNewsletterStore = create<NewsletterStore>((set) => ({
   subscribe: async (data: SubscribeData) => {
     set({ loading: true, error: null, success: null });
     try {
-      // This will call: http://localhost:4000/api/newsletter/subscribe
       const res = await axiosInstance.post("/newsletter/subscribe", data);
       
       if (res.data.success) {
@@ -66,7 +63,6 @@ export const useNewsletterStore = create<NewsletterStore>((set) => ({
   getAllSubscribers: async () => {
     set({ loading: true, error: null });
     try {
-      // This will call: http://localhost:4000/api/newsletter/subscribers
       const res = await axiosInstance.get("/newsletter/subscribers");
       
       if (res.data.success) {

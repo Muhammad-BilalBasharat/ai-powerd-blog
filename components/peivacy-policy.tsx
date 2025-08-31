@@ -10,7 +10,6 @@ const PrivacyPolicy = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white shadow-sm rounded-lg">
           <div className="px-6 py-8 sm:px-10 sm:py-12">
-            {/* Header */}
             <div className="border-b border-gray-200 pb-8">
               <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
                 Privacy Policy
@@ -20,7 +19,6 @@ const PrivacyPolicy = () => {
               </p>
             </div>
 
-            {/* Table of Contents */}
             <nav className="mt-8 mb-10">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">
                 Table of Contents
@@ -64,9 +62,7 @@ const PrivacyPolicy = () => {
               </ul>
             </nav>
 
-            {/* Content Sections */}
             <div className="space-y-10 text-gray-700">
-              {/* Introduction */}
               <section>
                 <p className="leading-relaxed">
                   At {companyName}, we take your privacy seriously. This Privacy Policy explains how we collect, 
@@ -75,7 +71,6 @@ const PrivacyPolicy = () => {
                 </p>
               </section>
 
-              {/* Information We Collect */}
               <section id="information-we-collect" className="scroll-mt-20">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                   1. Information We Collect
@@ -114,7 +109,6 @@ const PrivacyPolicy = () => {
                 </div>
               </section>
 
-              {/* How We Use Your Information */}
               <section id="how-we-use" className="scroll-mt-20">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                   2. How We Use Your Information
@@ -133,7 +127,6 @@ const PrivacyPolicy = () => {
                 </ul>
               </section>
 
-              {/* Data Sharing */}
               <section id="data-sharing" className="scroll-mt-20">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                   3. Data Sharing and Disclosure
@@ -163,7 +156,6 @@ const PrivacyPolicy = () => {
                 </div>
               </section>
 
-              {/* Data Security */}
               <section id="data-security" className="scroll-mt-20">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                   4. Data Security
@@ -176,7 +168,6 @@ const PrivacyPolicy = () => {
                 </p>
               </section>
 
-              {/* Your Rights */}
               <section id="your-rights" className="scroll-mt-20">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                   5. Your Rights
@@ -212,7 +203,6 @@ const PrivacyPolicy = () => {
                 </div>
               </section>
 
-              {/* Cookies */}
               <section id="cookies" className="scroll-mt-20">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                   6. Cookies and Tracking
@@ -225,7 +215,6 @@ const PrivacyPolicy = () => {
                 </p>
               </section>
 
-              {/* Contact */}
               <section id="contact" className="scroll-mt-20">
                 <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                   7. Contact Us
@@ -249,7 +238,6 @@ const PrivacyPolicy = () => {
                 </div>
               </section>
 
-              {/* Updates Notice */}
               <section className="border-t border-gray-200 pt-8 mt-12">
                 <p className="text-sm text-gray-600 text-center">
                   We may update this Privacy Policy from time to time. We will notify you of any changes by 

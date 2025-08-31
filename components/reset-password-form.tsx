@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Lock } from "lucide-react"
 import { PasswordResetSuccess } from "./password-reset-success"
-import { useAuthStore } from "@/lib/auth-store" // Update with correct path
-
+import { useAuthStore } from "@/lib/auth-store" 
 type ResetPasswordFormProps = {
   token: string
 }
@@ -34,7 +33,6 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       await resetPassword(token, data.newPassword)
       setIsSuccess(true)
     } catch (err) {
-      // Error is already handled in the store
       console.error("Password reset failed:", err)
     }
   }
@@ -79,7 +77,6 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
           {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>}
         </div>
 
-        {/* Display API error if any */}
         {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
 
         <Button

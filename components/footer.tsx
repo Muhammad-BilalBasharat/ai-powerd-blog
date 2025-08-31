@@ -8,7 +8,6 @@ export function Footer() {
     <footer className="bg-primary text-white mt-auto">
       <div className="max-w-7xl mx-auto px-6 py-6">
         <div className="grid xs:grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-          {/* Brand Section */}
           <div className="lg:col-span-5">
             <div className="mb-6">
               <h2 className="text-2xl font-bold mb-3">Bee Blog</h2>
@@ -26,10 +25,7 @@ export function Footer() {
               </svg>
             </Link>
           </div>
-
-          {/* Navigation Links */}
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {/* Quick Links */}
             <div>
               <h4 className="text-lg font-semibold mb-6 text-white">Navigation</h4>
               <ul className="space-y-3">
@@ -59,8 +55,6 @@ export function Footer() {
                 </li>
               </ul>
             </div>
-
-            {/* Resources */}
             <div>
               <h4 className="text-lg font-semibold mb-6 text-white">Resources</h4>
               <ul className="space-y-3">
@@ -90,8 +84,6 @@ export function Footer() {
                 </li>
               </ul>
             </div>
-
-            {/* Connect */}
             <div>
               <h4 className="text-lg font-semibold mb-6 text-white">Follow Us</h4>
               <div className="space-y-3">
@@ -131,8 +123,6 @@ export function Footer() {
         </div>
 
         <Separator className="bg-white/20" />
-
-        {/* Bottom Section */}
          <div className="py-2 text-center  text-sm text-white/80">
             <p>© {currentYear} Bee. All rights reserved.</p>
           </div>

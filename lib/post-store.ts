@@ -4,7 +4,6 @@
 import { create } from "zustand";
 import axios from "axios";
 
-// Now this will use http://localhost:4000/api from your .env.local
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
 const axiosInstance = axios.create({
@@ -80,7 +79,6 @@ export const usePostStore = create<PostStore>((set) => ({
   fetchPosts: async () => {
     set({ loading: true, error: null });
     try {
-      // This will call: http://localhost:4000/api/posts/posts
       const res = await axiosInstance.get("/posts/posts");
       set({ posts: res.data.posts, loading: false });
     } catch (err: any) {
@@ -94,7 +92,6 @@ export const usePostStore = create<PostStore>((set) => ({
   fetchPostById: async (id: string) => {
     set({ loading: true, error: null });
     try {
-      // This will call: http://localhost:4000/api/posts/post/:id
       const res = await axiosInstance.get(`/posts/post/${id}`);
       set({ currentPost: res.data.post, loading: false });
     } catch (err: any) {
@@ -108,7 +105,6 @@ export const usePostStore = create<PostStore>((set) => ({
   fetchPostBySlug: async (slug: string) => {
     set({ loading: true, error: null });
     try {
-      // This will call: http://localhost:4000/api/posts/post-by-slug/:slug
       const res = await axiosInstance.get(`/posts/post-by-slug/${slug}`);
       set({ currentPost: res.data.post, loading: false });
     } catch (err: any) {
@@ -139,7 +135,6 @@ export const usePostStore = create<PostStore>((set) => ({
         });
       }
 
-      // This will call: http://localhost:4000/api/posts/create-post
       const res = await axiosInstance.post("/posts/create-post", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -179,7 +174,6 @@ export const usePostStore = create<PostStore>((set) => ({
         });
       }
 
-      // This will call: http://localhost:4000/api/posts/update-post/:id
       const res = await axiosInstance.put(`/posts/update-post/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -201,7 +195,6 @@ export const usePostStore = create<PostStore>((set) => ({
   deletePost: async (id: string) => {
     set({ loading: true, error: null });
     try {
-      // This will call: http://localhost:4000/api/posts/delete-post/:id
       await axiosInstance.delete(`/posts/delete-post/${id}`);
       set(state => ({
         posts: state.posts.filter(post => post._id !== id),

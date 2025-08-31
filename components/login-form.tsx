@@ -42,7 +42,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     try {
       await login(data.email, data.password)
             toast.success("Login successful! Redirecting...", {
-        duration: 2000,
+        duration: 1000,
       })
       reset()
       setTimeout(() => {
@@ -129,8 +129,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     <p className="text-sm text-red-500">{errors.password.message}</p>
                   )}
                 </div>
-
-                {/* Submit Button */}
                 <div className="flex flex-col gap-3">
                   <Button 
                     type="submit" 
@@ -149,7 +147,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 </div>
               </div>
 
-              {/* Sign Up Link */}
               <div className="mt-4 text-center text-sm">
                 Don&apos;t have an account?{" "}
                 <Link href="/signup" className="underline underline-offset-4">

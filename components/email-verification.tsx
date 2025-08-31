@@ -4,7 +4,7 @@ import type React from "react"
 import { useForm, Controller } from "react-hook-form"
 import { useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { useAuthStore } from "@/lib/auth-store" // Update this import path
+import { useAuthStore } from "@/lib/auth-store" 
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 

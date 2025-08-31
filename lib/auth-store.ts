@@ -26,7 +26,7 @@ type AuthStore = {
   user: User | null;
   loading: boolean;
   error: string | null;
-  refreshTimeoutId: NodeJS.Timeout | null; // Add this to track timeout
+  refreshTimeoutId: NodeJS.Timeout | null; 
   signup: (name: string, email: string, password: string) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -35,7 +35,7 @@ type AuthStore = {
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
   verifyEmail: (token: string) => Promise<void>;
-  scheduleTokenRefresh: () => void; // Add this helper
+  scheduleTokenRefresh: () => void; 
 };
 
 export const useAuthStore = create<AuthStore>((set, get) => {
@@ -62,20 +62,16 @@ export const useAuthStore = create<AuthStore>((set, get) => {
     error: null,
     refreshTimeoutId: null,
 
-    // ADD THIS HELPER FUNCTION
     scheduleTokenRefresh: () => {
       const state = get();
       
-      // Clear any existing timeout
       if (state.refreshTimeoutId) {
         clearTimeout(state.refreshTimeoutId);
       }
 
-      // Schedule refresh 1 minute before expiry (14 minutes for 15min tokens)
       const timeoutId = setTimeout(async () => {
         try {
           await get().refreshToken();
-          // Schedule the next refresh
           get().scheduleTokenRefresh();
         } catch (error) {
           console.error('Scheduled token refresh failed:', error);
@@ -96,7 +92,6 @@ export const useAuthStore = create<AuthStore>((set, get) => {
         });
         set({ user: res.data.user, loading: false });
         
-        // START AUTO REFRESH AFTER SIGNUP
         get().scheduleTokenRefresh();
         
       } catch (err: any) {
@@ -107,7 +102,6 @@ export const useAuthStore = create<AuthStore>((set, get) => {
       }
     },
 
-    // UPDATE LOGIN FUNCTION
     login: async (email, password) => {
       set({ loading: true, error: null });
       try {
@@ -117,7 +111,6 @@ export const useAuthStore = create<AuthStore>((set, get) => {
         });
         set({ user: res.data.user, loading: false });
         
-        // START AUTO REFRESH AFTER LOGIN
         get().scheduleTokenRefresh();
         
       } catch (err: any) {
@@ -128,11 +121,9 @@ export const useAuthStore = create<AuthStore>((set, get) => {
       }
     },
 
-    // UPDATE LOGOUT FUNCTION
     logout: async () => {
       const state = get();
       
-      // Clear the refresh timeout
       if (state.refreshTimeoutId) {
         clearTimeout(state.refreshTimeoutId);
         set({ refreshTimeoutId: null });
@@ -155,7 +146,6 @@ export const useAuthStore = create<AuthStore>((set, get) => {
         );
         set({ user: res.data.user, loading: false });
         
-        // START AUTO REFRESH IF USER IS FOUND
         if (res.data.user) {
           get().scheduleTokenRefresh();
         }
@@ -216,7 +206,6 @@ export const useAuthStore = create<AuthStore>((set, get) => {
         set({ loading: false, error: null });
         if (res.data.user) {
           set({ user: res.data.user });
-          // START AUTO REFRESH AFTER EMAIL VERIFICATION
           get().scheduleTokenRefresh();
         }
         return res.data;

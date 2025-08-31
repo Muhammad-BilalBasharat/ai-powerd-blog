@@ -38,7 +38,6 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
     try {
       await signup(data.name, data.email, data.password)
       
-      // Check if signup was successful
       if (!error) {
         toast.success("Account created successfully! Please check your email to verify your account.")
         reset()
@@ -49,7 +48,6 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
     }
   }
 
-  // Watch for errors and show toast
   useEffect(() => {
     if (error) {
       toast.error(error)
@@ -65,8 +63,6 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
-              
-              {/* Full name */}
               <div className="grid gap-3">
                 <Label htmlFor="name">Full Name</Label>
                 <Input
@@ -85,8 +81,6 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
                 />
                 {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
               </div>
-              
-              {/* Email Field */}
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -105,8 +99,6 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
                 />
                 {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
               </div>
-
-              {/* Password Field */}
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
@@ -136,8 +128,6 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
                 </div>
                 {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
               </div>
-
-              {/* Submit Button */}
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full bg-secondary hover:bg-tertiary text-white font-medium text-base rounded-lg transition-colors" disabled={loading}>
                   {loading ? (
@@ -151,8 +141,6 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
                 </Button>
               </div>
             </div>
-
-            {/* Login Link */}
             <div className="mt-4 text-center text-sm">
               Already have an account?{" "}
               <Link href="/login" className="underline underline-offset-4">

@@ -10,29 +10,23 @@ export default function About() {
   return (
     <div className="min-h-screen bg-[#0e0e1a] text-white p-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-        {/* Profile Card */}
         <Card className="bg-[#111827] border-none shadow-lg text-white">
           <CardContent className="p-6 flex flex-col items-center">
-            {/* Avatar Image */}
             <div className="w-64 h-64 relative rounded-lg overflow-hidden">
               <Image
-                src={profile} // Ensure this path is correct
+                src={profile} 
                 alt="Profie Image"
                 fill
                 sizes="(max-width: 640px) 100vw, 640px"
                 className="object-cover"
               />
             </div>
-
-            {/* Name */}
             <h2 className="mt-4 text-xl font-semibold text-center">
               M Bilal Basharat
             </h2>
             <p className="text-sm text-gray-400 text-center">
               I&apos;m the person behind [This Blog].
             </p>
-
-            {/* Tags */}
             <div className="flex flex-wrap justify-center gap-2 mt-3">
               <span className="bg-[#1e293b] px-3 py-1 text-xs rounded-full">
                 Entrepreneur
@@ -46,10 +40,7 @@ export default function About() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Middle Column */}
         <div className="flex flex-col gap-6">
-          {/* Professional Skills */}
           <Card className="bg-[#111827] border-none text-white shadow-lg">
             <CardHeader>
               <CardTitle className="text-secondary">
@@ -67,8 +58,6 @@ export default function About() {
               </ul>
             </CardContent>
           </Card>
-
-          {/* Where I'm From */}
           <Card className="bg-[#111827] border-none shadow-lg">
             <CardHeader>
               <CardTitle className="text-secondary">
@@ -92,10 +81,7 @@ export default function About() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Right Column */}
         <div className="flex flex-col gap-4">
-          {/* Follow Us */}
           <Card className="bg-[#111827] border-none text-white shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-secondary">
@@ -107,8 +93,6 @@ export default function About() {
                 Follow for cool code snippets, dev tips, learnings, and new
                 updates.
               </p>
-
-              {/* Instagram */}
               <Link
                 href="https://instagram.com"
                 target="_blank"
@@ -116,8 +100,6 @@ export default function About() {
               >
                 <Instagram size={16} /> Instagram
               </Link>
-
-              {/* Twitter*/}
               <Link
                 href="https://x.com/"
                 target="_blank"
@@ -127,7 +109,6 @@ export default function About() {
               </Link>
             </CardContent>
           </Card>
-  {/* Our Company */}
           <Card className="bg-[#111827] border-none shadow-lg">
             <CardHeader>
               <CardTitle className="text-secondary">Our Company</CardTitle>
@@ -141,7 +122,6 @@ export default function About() {
               </Link>
             </CardContent>
           </Card>
-        
         </div>
       </div>
     </div>

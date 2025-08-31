@@ -54,7 +54,6 @@ export default function CommentComponent({ comment, currentUserId, onDelete, onU
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4 xs:p-6 shadow-sm">
       <div className="flex items-start gap-3 xs:gap-4">
-        {/* Avatar */}
         <div className="w-8 h-8 xs:w-10 xs:h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
           <User size={16} className="xs:w-5 xs:h-5" />
         </div>
@@ -93,8 +92,6 @@ export default function CommentComponent({ comment, currentUserId, onDelete, onU
               </div>
             )}
           </div>
-
-          {/* Content */}
           {isEditing ? (
             <div className="space-y-3">
               <textarea

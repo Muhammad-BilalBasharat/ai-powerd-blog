@@ -20,6 +20,7 @@ const Navbar = () => {
   const router = useRouter()
   const { user, logout } = useAuthStore()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [showMobileLogout, setShowMobileLogout] = useState(false)
   
   const navLinks = [
     { href: "/", label: "Home" },
@@ -50,23 +51,30 @@ const Navbar = () => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
+    setShowMobileLogout(false) // Reset logout view when opening menu
   }
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false)
+    setShowMobileLogout(false)
+  }
+
+  const handleMobileProfileClick = () => {
+    setShowMobileLogout(true)
+  }
+
+  const handleBackToMenu = () => {
+    setShowMobileLogout(false)
   }
 
   return (
     <>
       <nav className="bg-primary text-white shadow-2xl">
-        {/* Main navbar */}
         <div className="flex items-center justify-between p-4 xs:px-2 xs:py-3">
-          {/* Logo */}
           <div className="text-lg font-bold xs:text-base">
             Bee.
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex md:space-x-4 lg:space-x-6">
             {navLinks.map(link => (
               <Link
@@ -83,9 +91,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right side - Auth (Desktop Only) & Mobile Menu */}
           <div className="flex items-center space-x-2 xs:space-x-1">
-            {/* User Profile or Login (Desktop Only) */}
             <div className="hidden md:block">
               {user ? (
                 <Popover>
@@ -155,7 +161,6 @@ const Navbar = () => {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
             <Button
               variant="ghost"
               className="md:hidden h-10 w-10 xs:h-8 xs:w-8 rounded-lg hover:bg-white/10"
@@ -170,18 +175,14 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Sidebar Overlay */}
         {isMobileMenuOpen && (
           <>
-            {/* Backdrop */}
             <div 
               className="fixed inset-0 bg-black/50 z-40 md:hidden"
               onClick={closeMobileMenu}
             />
             
-            {/* Sidebar */}
             <div className="fixed top-0 left-0 h-full w-80 xs:w-72 bg-primary z-50 md:hidden transform transition-transform duration-300 flex flex-col">
-              {/* Sidebar Header */}
               <div className="flex items-center justify-between p-4 border-b border-white/10 flex-shrink-0">
                 <div className="text-lg font-bold uppercase">BEE.</div>
                 <Button
@@ -193,59 +194,92 @@ const Navbar = () => {
                 </Button>
               </div>
 
-              {/* Navigation Links */}
-              <div className="flex-1 overflow-y-auto">
-                <div className="flex flex-col p-4">
-                  {navLinks.map(link => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={closeMobileMenu}
-                      className={`uppercase text-sm py-4 px-2 border-b border-white/10 last:border-b-0 transition-all hover:bg-white/10 ${
-                        pathname === link.href
-                          ? "text-white font-semibold bg-white/10"
-                          : "text-white/80"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              {/* Auth Section in Sidebar */}
-              <div className="p-4 border-t border-white/10 flex-shrink-0">
-                {user ? (
-                  <div className="space-y-4">
-                    {/* User Info */}
-                    <div className="flex items-center space-x-3 p-3 bg-white/10 rounded-lg">
-                      <Avatar className="h-12 w-12 flex-shrink-0">
-                        <AvatarFallback className="bg-secondary text-white text-base">
-                          {getInitials(user.name)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex flex-col min-w-0 flex-1">
-                        <span className="text-white text-sm font-medium truncate">{user.name}</span>
-                        <span className="text-white/70 text-xs truncate" title={user.email}>{user.email}</span>
-                        <span className="text-white/60 text-xs">Role: {user.role}</span>
-                      </div>
+              {!showMobileLogout ? (
+                <>
+                  <div className="flex-1 overflow-y-auto">
+                    <div className="flex flex-col p-4">
+                      {navLinks.map(link => (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          onClick={closeMobileMenu}
+                          className={`uppercase text-sm py-4 px-2 border-b border-white/10 last:border-b-0 transition-all hover:bg-white/10 ${
+                            pathname === link.href
+                              ? "text-white font-semibold bg-white/10"
+                              : "text-white/80"
+                          }`}
+                        >
+                          {link.label}
+                        </Link>
+                      ))}
                     </div>
-                    
-                    {/* Profile Actions */}
-                    <div className="space-y-2">
-                      <Button variant="ghost" className="w-full justify-start text-white hover:bg-white/10">
-                        <User className="mr-2 h-4 w-4" />
-                        View Profile
+                  </div>
+
+                  <div className="p-4 border-t border-white/10 flex-shrink-0">
+                    {user ? (
+                      <div 
+                        className="flex items-center space-x-3 p-3 bg-white/10 rounded-lg cursor-pointer hover:bg-white/20 transition-colors"
+                        onClick={handleMobileProfileClick}
+                      >
+                        <Avatar className="h-12 w-12 flex-shrink-0">
+                          <AvatarFallback className="bg-secondary text-white text-base">
+                            {getInitials(user.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className="text-white text-sm font-medium truncate">{user.name}</span>
+                          <span className="text-white/70 text-xs truncate" title={user.email}>{user.email}</span>
+                          <span className="text-white/60 text-xs">Role: {user.role}</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <Link href="/login" onClick={closeMobileMenu}>
+                        <Button className="w-full bg-secondary hover:bg-tertiary text-white rounded-xl">
+                          LOGIN
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </>
+              ) : (
+                user && (
+                  <div className="flex-1 flex flex-col">
+                    <div className="p-4 border-b border-white/10">
+                      <Button
+                        variant="ghost"
+                        className="text-white hover:bg-white/10 justify-start p-2"
+                        onClick={handleBackToMenu}
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Back
                       </Button>
-                      <div className="flex items-center px-3 py-2 text-sm">
+                    </div>
+
+                    <div className="p-4 flex-1">
+                      <div className="flex items-center space-x-3 p-4 bg-white/10 rounded-lg mb-6">
+                        <Avatar className="h-16 w-16 flex-shrink-0">
+                          <AvatarFallback className="bg-secondary text-white text-lg">
+                            {getInitials(user.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col min-w-0 flex-1">
+                          <span className="text-white text-base font-medium truncate">{user.name}</span>
+                          <span className="text-white/70 text-sm truncate" title={user.email}>{user.email}</span>
+                          <span className="text-white/60 text-sm">Role: {user.role}</span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center px-3 py-2 mb-4">
                         <Mail className="mr-2 h-4 w-4 text-white/70" />
                         <span className={user.isVerified ? "text-green-300" : "text-yellow-300"}>
                           {user.isVerified ? "Email Verified" : "Email Not Verified"}
                         </span>
                       </div>
+                    </div>
+                    <div className="p-4 border-t border-white/10">
                       <Button 
-                        variant="ghost"
-                        className="w-full justify-start text-red-300 hover:bg-red-500/20 hover:text-red-200"
+                        variant="destructive"
+                        className="w-full bg-red-600 hover:bg-red-700 text-white rounded-lg"
                         onClick={handleLogout}
                       >
                         <LogOut className="mr-2 h-4 w-4" />
@@ -253,14 +287,8 @@ const Navbar = () => {
                       </Button>
                     </div>
                   </div>
-                ) : (
-                  <Link href="/login" onClick={closeMobileMenu}>
-                    <Button className="w-full bg-secondary hover:bg-tertiary text-white rounded-xl">
-                      LOGIN
-                    </Button>
-                  </Link>
-                )}
-              </div>
+                )
+              )}
             </div>
           </>
         )}
